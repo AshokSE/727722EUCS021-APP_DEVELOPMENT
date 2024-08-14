@@ -6,33 +6,29 @@ import './AllotedJobs.css';
 
 const AllotedJobs = () => {
   const [jobs, setJobs] = useState([]);
-  const [filteredJobs, setFilteredJobs] = useState([]);
   const [staffId, setStaffId] = useState('');
-
-  useEffect(() => {
-    // Fetch all jobs
-    axios.get('http://localhost:8080/jobs-alloted')
-      .then(response => {
-        setJobs(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching jobs:', error);
-      });
-  }, []);
 
   const handleStaffIdChange = (e) => {
     setStaffId(e.target.value);
   };
 
   const filterJobs = () => {
-    // Filter jobs based on entered staff ID
-    const filtered = jobs.filter(job => job.staffId === staffId);
-    setFilteredJobs(filtered);
+    if (staffId) {
+      axios.get(`http://localhost:8080/jobsalloted/get`, { params: { staffId } })
+        .then(response => {
+          setJobs(response.data);
+        })
+        .catch(error => {
+          console.error('Error fetching jobs:', error);
+        });
+    } else {
+      alert('Please enter a valid staff ID.');
+    }
   };
 
   const handleRequestChange = (job) => {
     // Send the job data to the request change endpoint
-    axios.post('http://localhost:8080/requests', job)
+    axios.post('http://localhost:8080/requests/post', job)
       .then(response => {
         console.log('Change request submitted successfully:', response.data);
         alert('Change request submitted successfully.');
@@ -43,9 +39,9 @@ const AllotedJobs = () => {
       });
   };
 
-  const handleRevertRequest = (jobId) => {
+  const handleRevertRequest = (id) => {
     // Send a DELETE request to remove the job change request
-    axios.delete(`http://localhost:8080/requests/${jobId}`)
+    axios.delete(`http://localhost:8080/requests/delete`, { params: { id } })
       .then(response => {
         console.log('Request reverted successfully:', response.data);
         alert('Request reverted successfully.');
@@ -123,10 +119,12 @@ const AllotedJobs = () => {
             </Button>
           </Box>
           <br />
-          {filteredJobs.length > 0 ? (
-            filteredJobs.map((job, index) => (
+          {jobs.length > 0 ? (
+             jobs.map((job, index) => (
               <Paper key={index} elevation={2} sx={{ padding: 3, marginBottom: 2 }}>
                 <Typography variant="h6">{job.task}</Typography>
+                <Typography variant="h6">{job.description}</Typography>
+                <br></br>
                 <Typography>Date: {job.date}</Typography>
                 <Typography>Shift: {job.shift}</Typography>
                 <Button

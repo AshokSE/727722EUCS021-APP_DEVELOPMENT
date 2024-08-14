@@ -10,15 +10,17 @@
 }
 
 h1 {
-  color: #a6a7a9;
+  color: black;
   font-family: 'Open Sans', sans-serif; /* Different font for headings */
 }
 
 .scheduleentire-page {
-  background-image: url("https://cdn.pixabay.com/photo/2019/04/01/12/48/time-4095294_1280.jpg");
+  /* background-image: url("https://cdn.pixabay.com/photo/2019/04/01/12/48/time-4095294_1280.jpg"); */
   background-size: 1500px;
   background-attachment: fixed;
   color: #333; /* Improved text color for better readability */
+  background: rgb(5,128,133);
+    background: linear-gradient(90deg, rgba(5,128,133,1) 0%, rgba(11,47,116,1) 100%);
 }
 
 .date-picker-container {

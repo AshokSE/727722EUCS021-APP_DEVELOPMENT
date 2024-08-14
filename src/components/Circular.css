@@ -7,9 +7,10 @@
 
   .circularbody{
     background-image: url("https://cdn.pixabay.com/photo/2020/05/26/14/25/banner-5223288_1280.jpg");
-    height: 100vh;
+   
     background-size: cover;
     background-attachment: fixed;
+    height: 100%;
   }
 
   .noCirculars{

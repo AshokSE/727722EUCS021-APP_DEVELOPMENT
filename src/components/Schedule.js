@@ -11,20 +11,27 @@ const Schedule = () => {
   const [jobDetailDialogOpen, setJobDetailDialogOpen] = useState(false);
 
   useEffect(() => {
-    axios.get('http://localhost:8080/staffs')
-      .then(response => {
+  const fetchStaffData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/users');
+      console.log('Staff Data:', response.data);
         const staffData = response.data.map(staff => ({
-          id: staff.id,
-          name: `${staff.firstname} ${staff.lastname}`,
+          id: staff.staffId,
+          name: `${staff.firstName} ${staff.lastName}`,
           department: staff.department,
           shifts: {} 
         }));
         setStaff(staffData);
-      })
-      .catch(error => {
-        console.error('Error fetching staff data:', error);
-      });
-  }, []);
+      
+      
+    } catch (error) {
+      console.error('Error fetching staff data:', error);
+    }
+  };
+
+  fetchStaffData();
+}, []);
+
 
   useEffect(() => {
     if (staff.length > 0) {
@@ -33,7 +40,7 @@ const Schedule = () => {
   }, [selectedDate, staff]);
 
   const fetchTasksForDate = (date) => {
-    axios.get(`http://localhost:8080/jobs-alloted?date=${date}`)
+    axios.get(`http://localhost:8080/jobsalloted/getbydate?date=${date}`)
       .then(response => {
         const tasks = response.data;
         const updatedStaff = staff.map(staffMember => {
@@ -76,7 +83,7 @@ const Schedule = () => {
       staffId: staffMember.id
     };
 
-    axios.post('http://localhost:8080/jobs-alloted', {
+    axios.post('http://localhost:8080/jobsalloted/post', {
       staffId: staffMember.id,
       staffName: staffMember.name,
       department: staffMember.department,
@@ -104,19 +111,20 @@ const Schedule = () => {
   return (
     <div className='scheduleentire-page'>
       <Navbar />
-      <br></br>
-      <br></br>
-      <br></br>
+      <br />
+      <br />
+      <br />
       <div className='schedulebody'>
         <div className='fixedtopschedule'>
-        <h1>Schedule</h1>
-        <hr></hr>
-        <p>Allot jobs for the Staffs of various department. Select Date and allot tasks for staffs on cells representing shifts.</p>
+          <h1>Schedule</h1>
+          <hr />
+          <p>Allot jobs for the Staffs of various department.</p>
+          <p>Select Date and allot tasks for staffs on cells representing shifts.</p>
         </div>
-        <br></br>
-        <br></br>
+        <br />
+        <br />
         <div className='row'>
-          <Paper className='date-picker-container' elevation={3} sx={{padding:3}}>
+          <Paper className='date-picker-container' elevation={3} sx={{ padding: 3 }}>
             <Typography variant="h6">Select Date</Typography>
             <TextField
               type="date"
@@ -140,22 +148,22 @@ const Schedule = () => {
             <Grid item xs={3} className='headblock'>Evening (17pm-22pm)</Grid>
           </Grid>
           {staff.map((staffMember, index) => (
-            <Grid container className='row' key={index}>
+            <Grid container className='row' key={staffMember.id}>
               <Grid item xs={3} className='block'>{staffMember.name}</Grid>
-              <Grid 
-                item xs={3} className='block' 
+              <Grid
+                item xs={3} className='block'
                 onClick={() => handleShiftClick(index, 'morning')}
               >
                 {staffMember.shifts.morning?.task || ''}
               </Grid>
-              <Grid 
+              <Grid
                 item xs={3} className='block'
                 onClick={() => handleShiftClick(index, 'afternoon')}
               >
                 {staffMember.shifts.afternoon?.task || ''}
               </Grid>
-              <Grid 
-                item xs={3} className='block' 
+              <Grid
+                item xs={3} className='block'
                 onClick={() => handleShiftClick(index, 'evening')}
               >
                 {staffMember.shifts.evening?.task || ''}
@@ -197,10 +205,3 @@ const Schedule = () => {
 }
 
 export default Schedule;
-
-
-
-
-
-
-
