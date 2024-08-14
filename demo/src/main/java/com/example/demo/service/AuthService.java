@@ -69,4 +69,5 @@ public class AuthService {
     {
         return userRepository.findAll();
     }
+
 }
